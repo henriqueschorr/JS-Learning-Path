@@ -1,25 +1,5 @@
 const Task = require('./task')
-
-var notificationService = function(){
-    var message = 'Notifying '
-    this.update = function(task){
-        console.log(message + task.user + ' for task ' + task.name)
-    }
-}
-
-var loggingService = function(){
-    var message = 'Logging '
-    this.update = function(task){
-        console.log(message + task.user + ' for task ' + task.name)
-    }
-}
-
-var auditingService = function(){
-    var message = 'Auditing '
-    this.update = function(task){
-        console.log(message + task.user + ' for task ' + task.name)
-    }
-}
+const ServiceFactory = require('./serviceFactory')
 
 function ObserverList(){
     this.observerList = []
@@ -84,17 +64,19 @@ ObservableTask.prototype.save = function(){
 
 var task1 = new ObservableTask({name:'Create Demo', user:'Jon'})
 
-var not = new notificationService()
-var ls = new loggingService()
-var audit = new auditingService()
+var notificationService = ServiceFactory.createService('notification')
+var loggingService = ServiceFactory.createService('logging')
+var auditingService = ServiceFactory.createService('auditing')
 
 //Add the method to the list
-task1.addObserver(not.update)
-task1.addObserver(ls.update)
-task1.addObserver(audit.update)
+// task1.addObserver(not.update)
+// task1.addObserver(ls.update)
+// task1.addObserver(audit.update)
 
-task1.save()
+// task1.save()
 
-task1.removeObserver(ls.update)
+// task1.removeObserver(ls.update)
 
-task1.save()
+// task1.save()
+
+notificationService.update(task1)
