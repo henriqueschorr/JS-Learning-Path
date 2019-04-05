@@ -1,7 +1,7 @@
 var NotificationService = function(){
-    var message = 'Notifying '
+    this.message = 'Notifying '
     this.update = function(task){
-        console.log(message + task.user + ' for task ' + task.name)
+        console.log(this.message + task.user + ' for task ' + task.name)
     }
 }
 

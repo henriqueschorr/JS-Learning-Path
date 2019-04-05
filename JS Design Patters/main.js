@@ -65,8 +65,9 @@ ObservableTask.prototype.save = function(){
 var task1 = new ObservableTask({name:'Create Demo', user:'Jon'})
 
 var notificationService = ServiceFactory.createService('notification')
-var loggingService = ServiceFactory.createService('logging')
-var auditingService = ServiceFactory.createService('auditing')
+// var notificationService2 = ServiceFactory('notification')
+// var loggingService = ServiceFactory.createService('logging')
+// var auditingService = ServiceFactory.createService('auditing')
 
 //Add the method to the list
 // task1.addObserver(not.update)

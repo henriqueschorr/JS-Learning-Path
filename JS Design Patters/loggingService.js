@@ -1,7 +1,7 @@
 var LoggingService = function(){
-    var message = 'Logging '
+    this.message = 'Logging '
     this.update = function(task){
-        console.log(message + task.user + ' for task ' + task.name)
+        console.log(this.message + task.user + ' for task ' + task.name)
     }
 }
 
