@@ -1,4 +1,5 @@
 const Task = require('./task')
+const Repo = require('./taskRepo')
 const ServiceFactory = require('./serviceFactory')
 
 function ObserverList() {
@@ -121,4 +122,35 @@ task1.complete = function(){
     Task.prototype.complete.call(this)
 }
 
-task1.complete()
+// task1.complete()
+
+Repo.execute('save', {
+    id: 1,
+    name: 'Task 1',
+    complete: false
+})
+
+Repo.execute('save', {
+    id: 2,
+    name: 'Task 2',
+    complete: false
+})
+
+Repo.execute('save', {
+    id: 3,
+    name: 'Task 3',
+    complete: false
+})
+
+Repo.execute('save', {
+    id: 4,
+    name: 'Task 4',
+    complete: false
+})
+
+console.log(Repo.tasks)
+Repo.tasks = {}
+console.log(Repo.tasks)
+
+Repo.replay()
+console.log(Repo.tasks)
