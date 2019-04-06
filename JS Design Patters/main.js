@@ -1,33 +1,33 @@
 const Task = require('./task')
 const ServiceFactory = require('./serviceFactory')
 
-function ObserverList(){
+function ObserverList() {
     this.observerList = []
 }
 
-ObserverList.prototype.add = function(obj){
+ObserverList.prototype.add = function (obj) {
     return this.observerList.push(obj)
 }
 
-ObserverList.prototype.get = function(index){
-    if(index > -1 && index < this.observerList.length){
+ObserverList.prototype.get = function (index) {
+    if (index > -1 && index < this.observerList.length) {
         return this.observerList[index]
     }
 }
 
-ObserverList.prototype.count = function(){
+ObserverList.prototype.count = function () {
     return this.observerList.length
 }
 
-ObserverList.prototype.removeAt = function(index){
+ObserverList.prototype.removeAt = function (index) {
     this.observerList.splice(index, 1)
 }
 
-ObserverList.prototype.indexOf = function(obj, startIndex){
+ObserverList.prototype.indexOf = function (obj, startIndex) {
     var i = startIndex
 
-    while(i < this.observerList.length){
-        if(this.observerList[i] === obj){
+    while (i < this.observerList.length) {
+        if (this.observerList[i] === obj) {
             return i
         }
         i++
@@ -36,33 +36,66 @@ ObserverList.prototype.indexOf = function(obj, startIndex){
     return -1
 }
 
-var ObservableTask = function(data){
+var ObservableTask = function (data) {
     Task.call(this, data)
     this.observers = new ObserverList()
 }
 
-ObservableTask.prototype.addObserver = function(observer){
+ObservableTask.prototype.addObserver = function (observer) {
     this.observers.add(observer)
 }
 
-ObservableTask.prototype.removeObserver = function(observer){
+ObservableTask.prototype.removeObserver = function (observer) {
     this.observers.removeAt(this.observers.indexOf(observer, 0))
 }
 
-ObservableTask.prototype.notify = function(context){
+ObservableTask.prototype.notify = function (context) {
     var observerCount = this.observers.count()
-    for(var i=0; i<observerCount; i++){
+    for (var i = 0; i < observerCount; i++) {
         //Here the observer method is called, for example nottificationService.update()
         this.observers.get(i)(context)
     }
 }
 
-ObservableTask.prototype.save = function(){
-    this.notify(this)  
+ObservableTask.prototype.save = function () {
+    this.notify(this)
     Task.prototype.save.call(this)
 }
 
-var task1 = new ObservableTask({name:'Create Demo', user:'Jon'})
+var mediator = (function () {
+    var channels = {}
+
+    var subscribe = function (channel, context, func) {
+        if (!mediator.channels[channel]) {
+            mediator.channels[channel] = []
+        }
+        mediator.channels[channel].push({
+            context,
+            func
+        })
+    }
+
+    var publish = function (channel) {
+        if (!this.channels[channel]) {
+            return false
+        }
+
+        var args = Array.prototype.slice.call(arguments, 1)
+
+        for (var i = 0; i < mediator.channels[channel].length; i++) {
+            var sub = mediator.channels[channel][i]
+            sub.func.apply(sub.context, args)
+        }
+    }
+
+    return{
+        channels,
+        subscribe,
+        publish
+    }
+}())
+
+var task1 = new ObservableTask({ name: 'Create Demo', user: 'Jon' })
 
 var notificationService = ServiceFactory.createService('notification')
 // var notificationService2 = ServiceFactory('notification')
@@ -80,4 +113,12 @@ var notificationService = ServiceFactory.createService('notification')
 
 // task1.save()
 
-notificationService.update(task1)
+mediator.subscribe('complete', notificationService, notificationService.update)
+// notificationService.update(task1)
+
+task1.complete = function(){
+    mediator.publish('complete', this)
+    Task.prototype.complete.call(this)
+}
+
+task1.complete()
