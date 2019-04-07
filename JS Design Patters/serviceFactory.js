@@ -1,23 +1,20 @@
-var Notification = require('./notificationService')
-var Logging = require('./loggingService')
-var Auditing = require('./auditingService')
+const Notification = require('./notificationService')
+const Logging = require('./loggingService')
+const Auditing = require('./auditingService')
 
-var serviceFactory = function () {
+let service = null
 
-    this.createService = function (serviceType) {
-        if (serviceType === 'notification') {
-            var notificationService = new Notification() 
-            return notificationService
-        } else if (serviceType === 'logging') {
-            var loggingService = new Logging() 
-            return loggingService
-        } else if (serviceType === 'auditing') {
-            var auditingService = new Auditing() 
-            return auditingService
-        }
+const ServiceFactory = function () {
+  this.createService = function (serviceType) {
+    if (serviceType === 'notification') {
+      service = new Notification()
+    } else if (serviceType === 'logging') {
+      service = new Logging()
+    } else if (serviceType === 'auditing') {
+      service = new Auditing()
     }
+    return service
+  }
 }
 
-module.exports = new serviceFactory;
-
-
+module.exports = new ServiceFactory();
